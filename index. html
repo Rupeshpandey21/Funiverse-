@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Funiverse — One Click. Endless Fun.</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080914;
+      --panel: #111426;
+      --text: #f5f6ff;
+      --muted: #a5a8c4;
+      --purple: #a855f7;
+      --cyan: #22d3ee;
+      --pink: #fb7185;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 15% 10%, #5520a333, transparent 35%),
+        radial-gradient(circle at 85% 25%, #087b9630, transparent 35%),
+        #080914;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 7%;
+      border-bottom: 1px solid #ffffff12;
+      position: sticky;
+      top: 0;
+      background: #080914dd;
+      backdrop-filter: blur(14px);
+      z-index: 5;
+    }
+    .logo {
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple), var(--pink));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .header-tag {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .hero {
+      text-align: center;
+      padding: 75px 20px 45px;
+    }
+    .pill {
+      display: inline-block;
+      border: 1px solid #a855f766;
+      background: #a855f718;
+      color: #d8b4fe;
+      border-radius: 30px;
+      padding: 8px 14px;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(42px, 8vw, 82px);
+      line-height: 1.05;
+      letter-spacing: -4px;
+      margin-bottom: 18px;
+    }
+    h1 span {
+      background: linear-gradient(90deg, var(--cyan), #c084fc, var(--pink));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 540px;
+      margin: auto;
+      line-height: 1.7;
+    }
+    .search-wrap {
+      max-width: 600px;
+      margin: 30px auto 0;
+      display: flex;
+      gap: 10px;
+    }
+    .search-wrap input {
+      flex: 1;
+      min-width: 0;
+      background: #111426;
+      color: white;
+      border: 1px solid #ffffff20;
+      border-radius: 14px;
+      padding: 15px 18px;
+      font-size: 15px;
+      outline: none;
+    }
+    .search-wrap input:focus { border-color: var(--purple); }
+    .search-wrap button, .play-btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 20px;
+      background: linear-gradient(100deg, #9333ea, #0891b2);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    main { max-width: 1200px; margin: auto; padding: 20px 24px 70px; }
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0;
+      gap: 12px;
+    }
+    .section-heading h2 { font-size: 23px; }
+    .section-heading span { color: var(--muted); font-size: 13px; }
+    .filters {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+    .filter {
+      border: 1px solid #ffffff1c;
+      background: #111426;
+      color: var(--muted);
+      border-radius: 30px;
+      padding: 9px 15px;
+      cursor: pointer;
+    }
+    .filter.active {
+      background: #a855f725;
+      color: #e9d5ff;
+      border-color: #a855f7;
+    }
+    .games {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 17px;
+    }
+    .card {
+      background: linear-gradient(145deg, #15182c, #0e1020);
+      border: 1px solid #ffffff12;
+      border-radius: 19px;
+      padding: 20px;
+      min-height: 195px;
+      transition: .2s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: #a855f766;
+      box-shadow: 0 10px 35px #8b5cf622;
+    }
+    .card-icon { font-size: 34px; margin-bottom: 14px; }
+    .card h3 { font-size: 17px; margin-bottom: 8px; }
+    .card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .card .category {
+      display: inline-block;
+      color: #c4b5fd;
+      font-size: 11px;
+      margin-top: 15px;
+      background: #a855f718;
+      padding: 5px 9px;
+      border-radius: 20px;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px 15px;
+      border-top: 1px solid #ffffff12;
+      font-size: 13px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #050611eF;
+      z-index: 10;
+      padding: 20px;
+      overflow-y: auto;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      width: min(100%, 600px);
+      background: #121529;
+      border: 1px solid #ffffff20;
+      border-radius: 22px;
+      padding: 25px;
+      text-align: center;
+    }
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .close {
+      background: #ffffff12;
+      color: white;
+      border: 0;
+      border-radius: 9px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    .game-area {
+      background: #090b18;
+      border-radius: 15px;
+      padding: 25px 15px;
+      margin: 20px 0;
+      min-height: 130px;
+    }
+    .game-area p { color: var(--muted); margin: 12px 0; }
+    .game-area input {
+      width: 100%;
+      padding: 12px;
+      background: #171a2d;
+      border: 1px solid #ffffff22;
+      border-radius: 10px;
+      color: white;
+      margin: 10px 0;
+    }
+    .big-emoji { font-size: 55px; }
+    .result { color: #67e8f9 !important; font-weight: bold; }
+    @media(max-width: 600px) {
+      header { padding: 16px 5%; }
+      .header-tag { display: none; }
+      .hero { padding-top: 55px; }
+      h1 { letter-spacing: -2px; }
+      main { padding: 15px 16px 50px; }
+      .search-wrap { flex-direction: column; }
+      .search-wrap button { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">✦ FUNIVERSE</div>
+  <div class="header-tag">ONE CLICK. ENDLESS FUN.</div>
+</header>
+
+<section class="hero">
+  <div class="pill">✨ YOUR UNIVERSE OF FUN</div>
+  <h1>One Click.<br><span>Endless Fun.</span></h1>
+  <p>Explore strange ideas, play tiny games, create amazing things, and discover a universe made for curiosity.</p>
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="🔍 Search your next adventure..." aria-label="Search games">
+    <button onclick="searchGames()">Explore</button>
+  </div>
+</section>
+
+<main>
+  <div class="section-heading">
+    <h2>Explore the Universe</h2>
+    <span id="game-count">12 experiences</span>
+  </div>
+
+  <div class="filters">
+    <button class="filter active" data-filter="All">🌌 All</button>
+    <button class="filter" data-filter="Games">🎮 Games</button>
+    <button class="filter" data-filter="Create">🎨 Create</button>
+    <button class="filter" data-filter="Explore">🚀 Explore</button>
+    <button class="filter" data-filter="Relax">🌿 Relax</button>
+  </div>
+
+  <div class="games" id="games"></div>
+</main>
+
+<footer>Made with curiosity 💜 · Funiverse — One Click. Endless Fun.</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <strong id="modal-title">Experience</strong>
+      <button class="close" onclick="closeGame()">✕ Close</button>
+    </div>
+    <div id="game-content"></div>
+  </div>
+</div>
+
+<script>
+const experiences = [
+  {name:"Emoji Kitchen",icon:"🍕",desc:"Mix two emojis and discover a new combination.",cat:"Create",game:"emoji"},
+  {name:"Typing Patrol",icon:"⌨️",desc:"Test your typing speed with a quick challenge.",cat:"Games",game:"typing"},
+  {name:"Your Island",icon:"🏝️",desc:"Imagine and create your own little island.",cat:"Create",game:"island"},
+  {name:"Happy Birthday",icon:"🎂",desc:"Discover what makes your birthday special.",cat:"Explore",game:"birthday"},
+  {name:"Quick Draw",icon:"✏️",desc:"Draw something from your imagination.",cat:"Create",game:"draw"},
+  {name:"Scale of Time",icon:"⏳",desc:"Travel through the incredible story of time.",cat:"Explore",game:"time"},
+  {name:"Guess the Price",icon:"💎",desc:"Take a guess at the price of surprising things.",cat:"Games",game:"price"},
+  {name:"Pixel Art Canvas",icon:"🟪",desc:"Create a tiny masterpiece pixel by pixel.",cat:"Create",game:"pixel"},
+  {name:"Water Ripple",icon:"💧",desc:"Make peaceful ripples on virtual water.",cat:"Relax",game:"water"},
+  {name:"Relaxing Sounds",icon:"🎧",desc:"Take a little break and imagine peaceful sounds.",cat:"Relax",game:"relax"},
+  {name:"Planet Explorer",icon:"🪐",desc:"Explore planets and imagine distant worlds.",cat:"Explore",game:"planet"},
+  {name:"Wrong Answers Only",icon:"🤪",desc:"Give the funniest answer you can think of.",cat:"Games",game:"wrong"}
+];
+
+let currentFilter = "All";
+
+function renderGames() {
+  const search = document.getElementById("search").value.toLowerCase();
+  const filtered = experiences.filter(item =>
+    (currentFilter === "All" || item.cat === currentFilter) &&
+    (item.name.toLowerCase().includes(search) || item.desc.toLowerCase().includes(search))
+  );
+
+  document.getElementById("games").innerHTML = filtered.map(item => `
+    <div class="card" onclick="openGame('${item.game}')">
+      <div class="card-icon">${item.icon}</div>
+      <h3>${item.name}</h3>
+      <p>${item.desc}</p>
+      <span class="category">${item.cat}</span>
+    </div>
+  `).join("");
+
+  document.getElementById("game-count").textContent = filtered.length + " experiences";
+}
+
+function searchGames() { renderGames(); }
+document.getElementById("search").addEventListener("input", renderGames);
+
+document.querySelectorAll(".filter").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".filter").forEach(b => b.classList.remove("active"));
+    button.classList.add("active");
+    currentFilter = button.dataset.filter;
+    renderGames();
+  });
+});
+
+function openGame(game) {
+  const modal = document.getElementById("modal");
+  const content = document.getElementById("game-content");
+  const title = document.getElementById("modal-title");
+  modal.classList.add("open");
+
+  const games = {
+    emoji: {
+      title:"🍳 Emoji Kitchen",
+      html:`<div class="game-area">
+        <div style="font-size:45px"><span id="emoji1">🍕</span> + <span id="emoji2">🐱</span></div>
+        <p>Choose two emojis to mix!</p>
+        <select id="e1"><option>🍕</option><option>🐱</option><option>🚀</option><option>🌈</option><option>🐸</option><option>🎂</option></select>
+        <select id="e2"><option>🐱</option><option>🍕</option><option>🚀</option><option>🌈</option><option>🐸</option><option>🎂</option></select>
+        <p id="mix-result" class="result">🍕🐱 — A delicious kitty!</p>
+        <button class="play-btn" onclick="mixEmoji()">Mix emojis</button>
+      </div>`
+    },
+    typing: {
+      title:"⌨️ Typing Patrol",
+      html:`<div class="game-area">
+        <h2 id="typing-word">universe</h2>
+        <p>Type the word below as quickly as you can!</p>
+        <input id="typing-input" placeholder="Start typing..." autocomplete="off">
+        <p id="typing-result" class="result">Ready? Go!</p>
+        <button class="play-btn" onclick="newTypingWord()">New word</button>
+      </div>`
+    },
+    island: {
+      title:"🏝️ Your Island",
+      html:`<div class="game-area">
+        <div class="big-emoji" id="island-scene">🌴 🏝️ 🌊</div>
+        <p>Add something to your imaginary island!</p>
+        <button class="play-btn" onclick="addIsland('🌴')">Add tree</button>
+        <button class="play-btn" onclick="addIsland('🏠')">Add house</button>
+        <button class="play-btn" onclick="addIsland('🐬')">Add dolphin</button>
+        <button class="play-btn" onclick="addIsland('🌋')">Add volcano</button>
+      </div>`
+    },
+    birthday: {
+      title:"🎂 Happy Birthday",
+      html:`<div class="game-area">
+        <p>Enter your birthday to start exploring!</p>
+        <input id="birth-date" type="date">
+        <button class="play-btn" onclick="showBirthday()">Discover my day</button>
+        <p id="birthday-result" class="result"></p>
+      </div>`
+    },
+    draw: {
+      title:"✏️ Quick Draw",
+      html:`<div class="game-area">
+        <p>What can you draw in 20 seconds?</p>
+        <h2 id="draw-prompt">Draw a rocket! 🚀</h2>
+        <canvas id="draw-canvas" width="300" height="180" style="max-width:100%;background:white;border-radius:10px;touch-action:none"></canvas>
+        <br><button class="play-btn" onclick="clearCanvas()">Clear canvas</button>
+        <button class="play-btn" onclick="newDrawPrompt()">New prompt</button>
+      </div>`
+    },
+    time: {
+      title:"⏳ Scale of Time",
+      html:`<div class="game-area">
+        <div class="big-emoji">🌌</div>
+        <h2 id="time-title">The Big Bang</h2>
+        <p id="time-desc">The universe began around 13.8 billion years ago.</p>
+        <button class="play-btn" onclick="changeTime(-1)">← Previous</button>
+        <button class="play-btn" onclick="changeTime(1)">Next →</button>
+      </div>`
+    },
+    price: {
+      title:"💎 Guess the Price",
+      html:`<div class="game-area">
+        <div class="big-emoji" id="price-item">🎮</div>
+        <h2 id="price-name">A game controller</h2>
+        <p>Guess its pretend price in rupees!</p>
+        <input id="price-guess" type="number" placeholder="Your guess ₹">
+        <button class="play-btn" onclick="guessPrice()">Check guess</button>
+        <p id="price-result" class="result"></p>
+      </div>`
+    },
+    pixel: {
+      title:"🟪 Pixel Art Canvas",
+      html:`<div class="game-area">
+        <p>Tap the squares to make pixel art!</p>
+        <div id="pixel-grid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:3px;max-width:300px;margin:auto"></div>
+        <button class="play-btn" onclick="newPixelGrid()">Clear</button>
+      </div>`
+    },
+    water: {
+      title:"💧 Water Ripple",
+      html:`<div class="game-area" onclick="this.style.background='#12334b';setTimeout(()=>this.style.background='#090b18',300)">
+        <div class="big-emoji">💧 🌊 💧</div>
+        <p>Tap this area to imagine a ripple in the water!</p>
+      </div>`
+    },
+    relax: {
+      title:"🎧 Relaxing Sounds",
+      html:`<div class="game-area">
+        <div class="big-emoji">🌧️</div>
+        <h2>A quiet moment</h2>
+        <p>Take a slow breath. Imagine gentle rain, leaves moving, and a peaceful evening.</p>
+        <button class="play-btn" onclick="this.textContent='🌿 You deserve a peaceful break'">Take a moment</button>
+      </div>`
+    },
+    planet: {
+      title:"🪐 Planet Explorer",
+      html:`<div class="game-area">
+        <div class="big-emoji" id="planet-icon">🪐</div>
+        <h2 id="planet-name">Saturn</h2>
+        <p id="planet-desc">Saturn is famous for its beautiful rings.</p>
+        <button class="play-btn" onclick="changePlanet()">Explore another planet</button>
+      </div>`
+    },
+    wrong: {
+      title:"🤪 Wrong Answers Only",
+      html:`<div class="game-area">
+        <h2 id="wrong-question">Why do birds fly?</h2>
+        <p>Give the funniest wrong answer you can imagine!</p>
+        <input id="wrong-input" placeholder="Your funny answer...">
+        <button class="play-btn" onclick="showWrong()">Submit answer</button>
+        <p id="wrong-result" class="result"></p>
+        <button class="play-btn" onclick="newWrongQuestion()">Next question</button>
+      </div>`
+    }
+  };
+
+  const selected = games[game] || {title:"Funiverse",html:"<p>More fun coming soon!</p>"};
+  title.textContent = selected.title;
+  content.innerHTML = selected.html;
+
+  if(game === "typing") newTypingWord();
+  if(game === "draw") setupCanvas();
+  if(game === "pixel") newPixelGrid();
+}
+
+function closeGame() {
+  document.getElementById("modal").classList.remove("open");
+}
+document.getElementById("modal").addEventListener("click", e => {
+  if(e.target.id === "modal") closeGame();
+});
+
+function mixEmoji() {
+  const a = document.getElementById("e1").value;
+  const b = document.getElementById("e2").value;
+  document.getElementById("emoji1").textContent = a;
+  document.getElementById("emoji2").textContent = b;
+  document.getElementById("mix-result").textContent = a + b + " — Your new emoji combo!";
+}
+
+const typingWords = ["universe","galaxy","adventure","rainbow","fantastic","creative","discovery"];
+function newTypingWord() {
+  const word = typingWords[Math.floor(Math.random()*typingWords.length)];
+  const heading = document.getElementById("typing-word");
+  const input = document.getElementById("typing-input");
+  if(!heading || !input) return;
+  heading.textContent = word;
+  input.value = "";
+  input.focus();
+  input.oninput = () => {
+    document.getElementById("typing-result").textContent =
+      input.value === word ? "✨ Perfect! You typed it!" : "Keep going...";
+  };
+}
+
+function addIsland(item) {
+  const scene = document.getElementById("island-scene");
+  scene.textContent += " " + item;
+}
+
+function showBirthday() {
+  const date = document.getElementById("birth-date").value;
+  if(!date) {
+    document.getElementById("birthday-result").textContent = "Choose your birthday first!";
+    return;
+  }
+  const year = date.split("-")[0];
+  document.getElementById("birthday-result").textContent =
+    "🎉 You were born in " + year + "! Your birthday discovery journey begins.";
+}
+
+let drawPrompts = ["Draw a rocket! 🚀","Draw a happy cat! 🐱","Draw a magical tree! 🌳","Draw a flying pizza! 🍕"];
+function newDrawPrompt() {
+  document.getElementById("draw-prompt").textContent =
+    drawPrompts[Math.floor(Math.random()*drawPrompts.length)];
+}
+function setupCanvas() {
+  const canvas = document.getElementById("draw-canvas");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  ctx.lineWidth = 4;
+  ctx.lineCap = "round";
+  let drawing = false;
+  function pos(e) {
+    const r = canvas.getBoundingClientRect();
+    return {x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height};
+  }
+  canvas.onpointerdown = e => { drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); };
+  canvas.onpointermove = e => { if(drawing){const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();} };
+  canvas.onpointerup = canvas.onpointerleave = () => drawing=false;
+}
+function clearCanvas() {
+  const canvas = document.getElementById("draw-canvas");
+  if(canvas) canvas.getContext("2d").clearRect(0,0,canvas.width,canvas.height);
+}
+
+const timeline = [
+  ["The Big Bang","The universe began around 13.8 billion years ago."],
+  ["First Stars","The first stars formed from clouds of gas."],
+  ["Our Solar System","Our Sun and planets formed about 4.6 billion years ago."],
+  ["Dinosaurs","Dinosaurs lived millions of years before humans."],
+  ["Humans","Modern humans appeared hundreds of thousands of years ago."],
+  ["Today","You are here, exploring the universe! ✨"]
+];
+let timeIndex = 0;
+function changeTime(step) {
+  timeIndex = (timeIndex + step + timeline.length) % timeline.length;
+  document.getElementById("time-title").textContent = timeline[timeIndex][0];
+  document.getElementById("time-desc").textContent = timeline[timeIndex][1];
+}
+
+const prices = [
+  ["🎮","A game controller",5000],
+  ["🎧","Wireless headphones",8000],
+  ["⌚","A smart watch",12000],
+  ["📱","A smartphone",25000]
+];
+let priceIndex = 0;
+function guessPrice() {
+  const guess = Number(document.getElementById("price-guess").value);
+  const actual = prices[priceIndex][2];
+  document.getElementById("price-result").textContent =
+    guess === actual ? "🎉 Exact guess!" :
+    guess < actual ? "A little higher! Pretend price: ₹" + actual :
+    "A little lower! Pretend price: ₹" + actual;
+}
+function nextPrice() {
+  priceIndex = (priceIndex+1)%prices.length;
+  document.getElementById("price-item").textContent=prices[priceIndex][0];
+  document.getElementById("price-name").textContent=prices[priceIndex][1];
+}
+
+function newPixelGrid() {
+  const grid = document.getElementById("pixel-grid");
+  if(!grid) return;
+  grid.innerHTML = "";
+  const colors = ["#171a2d","#a855f7","#22d3ee","#fb7185","#facc15","#ffffff"];
+  for(let i=0;i<64;i++){
+    const cell=document.createElement("button");
+    cell.style.aspectRatio="1";
+    cell.style.background=colors[0];
+    cell.style.border="0";
+    cell.style.borderRadius="3px";
+    cell.onclick=()=>cell.style.background=colors[Math.floor(Math.random()*colors.length)];
+    grid.appendChild(cell);
+  }
+}
+
+const planets = [
+  ["🌍","Earth","Our home planet has liquid water on its surface."],
+  ["🔴","Mars","Mars is known as the Red Planet."],
+  ["🪐","Saturn","Saturn has spectacular rings made of ice and rock."],
+  ["🔵","Neptune","Neptune is a distant, deep-blue planet."]
+];
+let planetIndex=0;
+function changePlanet(){
+  planetIndex=(planetIndex+1)%planets.length;
+  document.getElementById("planet-icon").textContent=planets[planetIndex][0];
+  document.getElementById("planet-name").textContent=planets[planetIndex][1];
+  document.getElementById("planet-desc").textContent=planets[planetIndex][2];
+}
+
+const questions=["Why do birds fly?","Why is the ocean blue?","What do clouds eat for breakfast?","Why does the Moon follow us?"];
+let questionIndex=0;
+function showWrong(){
+  const answer=document.getElementById("wrong-input").value;
+  document.getElementById("wrong-result").textContent=answer ? "😂 Your answer: “"+answer+"”" : "Type your funny answer first!";
+}
+function newWrongQuestion(){
+  questionIndex=(questionIndex+1)%questions.length;
+  document.getElementById("wrong-question").textContent=questions[questionIndex];
+  document.getElementById("wrong-input").value="";
+  document.getElementById("wrong-result").textContent="";
+}
+
+renderGames();
+</script>
+</body>
+</html>
